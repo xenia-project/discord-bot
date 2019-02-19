@@ -9,6 +9,12 @@ import requests
 import zipfile
 
 
+SIZE_LIMIT_MB = 16 * 1024 * 1024
+
+COLOR_RED = 0x992D22
+COLOR_BLUE = 0x22992D
+
+
 class XeniaBot(Plugin):
     def parse_log_file(self, file_name, file):
         """
@@ -17,7 +23,8 @@ class XeniaBot(Plugin):
         embed = MessageEmbed()
         embed.title = "**{}**\n".format(sanitize(file_name,
                                                  escape_codeblocks=True))
-        embed.color = 0x22992D
+        embed.description = ''
+        embed.color = COLOR_BLUE
 
         build_info = {}
         message_levels = {
@@ -65,13 +72,14 @@ class XeniaBot(Plugin):
             lines += 1
 
         if 'date' not in build_info:
-            embed.color = 0x992D22
+            embed.color = COLOR_RED
             embed.description = "\t**Invalid file**. Could not find build information - is this a Xenia logfile?"
             return embed
 
         # Setup the description
-        embed.description = "Branch: {branch}\nDate: {date}\nCommit: {commit}\n".format(
-            **build_info)
+        if 'branch' in build_info and 'date' in build_info and 'commit' in build_info:
+            embed.description = "Branch: {branch}\nDate: {date}\nCommit: {commit}\n".format(
+                **build_info)
         if 'title_id' in build_info:
             embed.description += "Title ID: {title_id}".format(**build_info)
 
@@ -116,14 +124,14 @@ class XeniaBot(Plugin):
         self.client.api.channels_typing(event.channel.id)
         for _, attach in event.msg.attachments.items():
             s_file_name = sanitize(attach.filename, escape_codeblocks=True)
-            if attach.size > 16777216:
-                event.msg.reply(event.author.mention, embed=MessageEmbed(title=s_file_name, color=0x992D22,
+            if attach.size > SIZE_LIMIT_MB:
+                event.msg.reply(event.author.mention, embed=MessageEmbed(title=s_file_name, color=COLOR_RED,
                                                                          description="**File above 16MB, not analyzed**. Did you compress it?"))
                 continue
 
             r = requests.get(attach.url)
             if r.status_code != 200:
-                event.msg.reply(event.author.mention, embed=MessageEmbed(title=s_file_name, color=0x992D22,
+                event.msg.reply(event.author.mention, embed=MessageEmbed(title=s_file_name, color=COLOR_RED,
                                                                          description="**Failed to fetch file from Discord**, status code {}".format(r.status_code)))
                 continue
 
@@ -136,7 +144,7 @@ class XeniaBot(Plugin):
                 z = zipfile.ZipFile(io.BytesIO(r.content))
                 if len(z.namelist()) != 1:
                     event.msg.reply(event.author.mention, embed=MessageEmbed(
-                        title=s_file_name, color=0x992D22, description="**Archives must contain only a single file**."))
+                        title=s_file_name, color=COLOR_RED, description="**Archives must contain only a single file**."))
                     continue
 
                 # Parse every file in the zip file.
@@ -145,7 +153,7 @@ class XeniaBot(Plugin):
                     mime = magic.from_buffer(z.open(name).read(1024), mime=True)
                     if mime != 'text/plain':
                         event.msg.reply(event.author.mention, embed=MessageEmbed(
-                            title=s_file_name, color=0x992D22, description="**Contents not plaintext, ignored**."))
+                            title=s_file_name, color=COLOR_RED, description="**Contents not plaintext, ignored**."))
                         continue
 
                     event.msg.reply(event.author.mention, embed=self.parse_log_file(
@@ -154,7 +162,7 @@ class XeniaBot(Plugin):
                 z.close()
             else:
                 event.msg.reply(event.author.mention, embed=MessageEmbed(
-                    title=s_file_name, color=0x992D22, description="**Unsupported file type, not analyzed**."))
+                    title=s_file_name, color=COLOR_RED, description="**Unsupported file type, not analyzed**."))
                 continue
 
     @Plugin.command('help')
