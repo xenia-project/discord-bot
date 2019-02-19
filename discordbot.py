@@ -9,7 +9,7 @@ import requests
 import zipfile
 
 
-SIZE_LIMIT_MB = 16 * 1024 * 1024
+SIZE_LIMIT_MB = 64 * 1024 * 1024
 
 COLOR_RED = 0x992D22
 COLOR_BLUE = 0x22992D
@@ -126,7 +126,7 @@ class XeniaBot(Plugin):
             s_file_name = sanitize(attach.filename, escape_codeblocks=True)
             if attach.size > SIZE_LIMIT_MB:
                 event.msg.reply(event.author.mention, embed=MessageEmbed(title=s_file_name, color=COLOR_RED,
-                                                                         description="**File above 16MB, not analyzed**. Did you compress it?"))
+                                                                         description="**File above size limit, not analyzed**. Did you compress it?"))
                 continue
 
             r = requests.get(attach.url)
@@ -168,5 +168,5 @@ class XeniaBot(Plugin):
     @Plugin.command('help')
     def on_help_command(self, event):
         message = '{}, commands available:\n'.format(event.author.mention)
-        message += '\tanalyze (a): Analyze an attached logfile (zipped or uncompressed). Must be < 16MB, and must be ran in #help.\n'
+        message += '\tanalyze (a): Analyze an attached logfile (zipped or uncompressed). Must be < 64MB, and must be ran in #help.\n'
         event.msg.reply(message)
