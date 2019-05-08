@@ -11,7 +11,7 @@ import zipfile
 
 SIZE_LIMIT_MB = 64 * 1024 * 1024
 
-ALLOWED_CHANNELS = ["dev", "help", "secret"]
+ALLOWED_CHANNELS = ["dev", "help", "secret", "bot_spam"]
 
 COLOR_RED = 0x992D22
 COLOR_BLUE = 0x22992D
