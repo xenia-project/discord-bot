@@ -1,4 +1,4 @@
-from disco.bot import Bot, Plugin
+from disco.bot import Plugin
 from disco.types.message import MessageEmbed
 from disco.util.sanitize import S as sanitize
 
@@ -10,6 +10,8 @@ import zipfile
 
 
 SIZE_LIMIT_MB = 64 * 1024 * 1024
+
+ALLOWED_CHANNELS = ["dev", "help", "secret", "bot_spam"]
 
 COLOR_RED = 0x992D22
 COLOR_BLUE = 0x22992D
@@ -84,33 +86,35 @@ class XeniaBot(Plugin):
             embed.description += "Title ID: {title_id}".format(**build_info)
 
         # Errors
-        errors = "```\n"
-        for line in message_levels['!']:
-            if len(errors) + len(line) > 997:
-                errors += '...'
-                break
+        if len(message_levels['!']) > 0:
+            errors = "```\n"
+            for line in message_levels['!']:
+                if len(errors) + len(line) > 997:
+                    errors += '...'
+                    break
 
-            errors += "{}\n".format(line)
-        errors += "```\n"
-        embed.add_field(name="Errors", value=errors)
+                errors += "{}\n".format(line)
+            errors += "```\n"
+            embed.add_field(name="Errors", value=errors)
 
         # Warnings
-        warnings = "```\n"
-        for line in message_levels['w']:
-            if len(warnings) + len(line) > 997:
-                warnings += '...'
-                break
+        if len(message_levels["w"]) > 0:
+            warnings = "```\n"
+            for line in message_levels['w']:
+                if len(warnings) + len(line) > 997:
+                    warnings += '...'
+                    break
 
-            warnings += "{}\n".format(line)
-        warnings += "```\n"
-        embed.add_field(name="Warnings", value=warnings)
+                warnings += "{}\n".format(line)
+            warnings += "```\n"
+            embed.add_field(name="Warnings", value=warnings)
 
         return embed
 
     @Plugin.command('a')
     @Plugin.command('analyze')
     def on_analyze_command(self, event):
-        if event.channel.name != 'dev' and event.channel.name != 'help' and event.channel.name != 'secret':
+        if event.channel.name not in ALLOWED_CHANNELS:
             event.msg.reply(
                 "{}, please run this command in #help.".format(event.author.mention))
             return
