@@ -116,7 +116,7 @@ class XeniaBot(Plugin):
     def on_analyze_command(self, event):
         if event.channel.name not in ALLOWED_CHANNELS:
             event.msg.reply(
-                "{}, please run this command in #help.".format(event.author.mention))
+                "{}, please run this command in #help or #bot_spam.".format(event.author.mention))
             return
 
         if len(event.msg.attachments) < 1:
@@ -172,5 +172,5 @@ class XeniaBot(Plugin):
     @Plugin.command('help')
     def on_help_command(self, event):
         message = '{}, commands available:\n'.format(event.author.mention)
-        message += '\tanalyze (a): Analyze an attached logfile (zipped or uncompressed). Must be < 64MB, and must be ran in #help.\n'
+        message += '\tanalyze (a): Analyze an attached logfile (zipped or uncompressed). Must be < 64MB, and must be ran in #help or #bot_spam.\n'
         event.msg.reply(message)
