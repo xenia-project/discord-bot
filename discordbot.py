@@ -95,13 +95,13 @@ class XeniaBot(Plugin):
 
         # Setup the description
         if 'pr_number' in build_info and 'pr_repo' in build_info and 'pr_branch' and 'pr_commit' in build_info:
-            embed.description += "PR# {pr_number}\nPR Repository: {pr_repo}\nPR Branch: {pr_branch}\nPR Commit: {pr_commit}\n".format(
+            embed.description += "PR# `{pr_number}`\nPR Repository: `{pr_repo}`\nPR Branch: `{pr_branch}`\nPR Commit: `{pr_commit}`\n".format(
                 **build_info)
         if 'branch' in build_info and 'date' in build_info and 'commit' in build_info:
-            embed.description += "Branch: {branch}\nDate: {date}\nCommit: {commit}\n".format(
+            embed.description += "Branch: `{branch}`\nDate: {date}\nCommit: `{commit}`\n".format(
                 **build_info)
         if 'title_id' in build_info:
-            embed.description += "Title ID: {title_id}".format(**build_info)
+            embed.description += "Title ID: `{title_id}`".format(**build_info)
 
         # Errors
         if len(message_levels['!']) > 0:
