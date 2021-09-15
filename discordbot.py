@@ -77,9 +77,9 @@ class XeniaBot(Plugin):
 
             # See if we can find a game ID.
             if 'title_id' not in build_info:
-                res = re.search(r'^\s*Title ID: ([0-9a-fA-F]{8})$', sanitized_line)
+                res = re.search(r'^\s*Title ID: (?P<title_id>[0-9a-fA-F]{8})$', sanitized_line)
                 if res:
-                    build_info.update({"title_id": res.group(1)})
+                    build_info.update({"title_id": res.group('title_id')})
 
             if len(sanitized_line) > 1 and (sanitized_line[0] in message_levels):
                 if sanitized_line not in seen:
