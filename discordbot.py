@@ -94,7 +94,7 @@ class XeniaBot(Plugin):
             return embed
 
         # Setup the description
-        if 'pr_number' in build_info and 'pr_repo' in build_info and 'pr_branch' and 'pr_commit' in build_info:
+        if 'pr_number' in build_info and 'pr_repo' in build_info and 'pr_branch' in build_info and 'pr_commit' in build_info:
             embed.description += "PR# `{pr_number}`\nPR Repository: `{pr_repo}`\nPR Branch: `{pr_branch}`\nPR Commit: `{pr_commit}`\n".format(
                 **build_info)
         if 'branch' in build_info and 'date' in build_info and 'commit' in build_info:
