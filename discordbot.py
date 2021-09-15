@@ -70,7 +70,7 @@ class XeniaBot(Plugin):
                 if sanitized_line not in seen:
                     seen.add(sanitized_line)
                     message_levels[sanitized_line[0]].append(sanitized_line)
-            
+
             lines += 1
 
         if 'date' not in build_info:
@@ -162,7 +162,7 @@ class XeniaBot(Plugin):
 
                     event.msg.reply(event.author.mention, embed=self.parse_log_file(
                         name, z.open(name)))
-                    
+
                 z.close()
             else:
                 event.msg.reply(event.author.mention, embed=MessageEmbed(
