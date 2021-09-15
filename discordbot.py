@@ -52,13 +52,28 @@ class XeniaBot(Plugin):
             if 'date' not in build_info:
                 # Scan for build info
                 res = re.search(
-                    r'^i> ([0-9a-fA-f]{8}) Build: (.*) / ([0-9a-fA-F]{40}) on (.*)$', sanitized_line)
+                    # Log prefix (with thread number)
+                    r'^i> (?:[0-9a-fA-f]{8}) Build: '
+                    # Optional PR repo, branch, commit
+                    r'(?:PR#(?P<pr_number>\d+) (?P<pr_repo>.*) (?P<pr_branch>.*)(?:@)(?P<pr_commit>[0-9a-fA-F]{40}|[0-9a-fA-F]{9}) against )?'
+                    # Branch, commit, date
+                    r'(?P<branch>.*)(?: / |\@)(?P<commit>[0-9a-fA-F]{40}|[0-9a-fA-F]{9}) on (?P<date>.*)'
+                    # End
+                    r'$',
+                    sanitized_line)
                 if res:
                     build_info.update({
-                        "branch": res.group(2),
-                        "commit": res.group(3),
-                        "date": res.group(4),
+                        "branch": res.group('branch'),
+                        "commit": res.group('commit'),
+                        "date": res.group('date'),
                     })
+                    if res.group('pr_number') is not None:
+                        build_info.update({
+                            "pr_number": res.group('pr_number'),
+                            "pr_repo": res.group('pr_repo'),
+                            "pr_branch": res.group('pr_branch'),
+                            "pr_commit": res.group('pr_commit'),
+                        })
 
             # See if we can find a game ID.
             if 'title_id' not in build_info:
@@ -79,8 +94,11 @@ class XeniaBot(Plugin):
             return embed
 
         # Setup the description
+        if 'pr_number' in build_info and 'pr_repo' in build_info and 'pr_branch' and 'pr_commit' in build_info:
+            embed.description += "PR# {pr_number}\nPR Repository: {pr_repo}\nPR Branch: {pr_branch}\nPR Commit: {pr_commit}\n".format(
+                **build_info)
         if 'branch' in build_info and 'date' in build_info and 'commit' in build_info:
-            embed.description = "Branch: {branch}\nDate: {date}\nCommit: {commit}\n".format(
+            embed.description += "Branch: {branch}\nDate: {date}\nCommit: {commit}\n".format(
                 **build_info)
         if 'title_id' in build_info:
             embed.description += "Title ID: {title_id}".format(**build_info)
