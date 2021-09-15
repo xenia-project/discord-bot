@@ -57,7 +57,7 @@ class XeniaBot(Plugin):
                     # Optional PR repo, branch, commit
                     r'(?:PR#(?P<pr_number>\d+) (?P<pr_repo>.*) (?P<pr_branch>.*)(?:@)(?P<pr_commit>[0-9a-fA-F]{40}|[0-9a-fA-F]{9}) against )?'
                     # Branch, commit, date
-                    r'(?P<branch>.*)(?: / |\@)(?P<commit>[0-9a-fA-F]{40}|[0-9a-fA-F]{9}) on (?P<date>.*)'
+                    r'(?P<branch>.*)(?: / |@)(?P<commit>[0-9a-fA-F]{40}|[0-9a-fA-F]{9}) on (?P<date>.*)'
                     # End
                     r'$',
                     sanitized_line)
